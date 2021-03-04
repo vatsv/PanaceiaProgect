@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% load static %}
+
+<div class="col-md-9 px-4">
+    <div class="row">
+        <div class="col-md-12 block-info">
+            <h4>Оставить отзыв</h4>
+            <div class="line"></div>
+
+            {% if form.errors %}
+                {% for key, value in form.errors.items %}
+                    <div class="error-wrap">
+                        {% if key == 'star_prof' %}
+                            Профессионализм {{value}}
+                        {% endif %}
+
+                        {% if key == 'star_pers' %}
+                            Личные качества  {{value}}
+                        {% endif %}
+
+                        {% if key == 'text' %}
+                            Текст отзыва  {{value}}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <p>Профессионализм:</p>
+            <div class="star-rate star-prof" data-rate-value="{{form.star_prof.value}}"></div>
+            <p>Личные качества:</p>
+            <div class="star-rate star-pers" data-rate-value="{{form.star_pers.value}}"></div>
+
+            <form class="row" action="{% url 'save_review_view' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-md-12 block-form">
+                    <input type="hidden" name="star_prof" id="star-prof" value="{{form.star_prof.value}}">
+                    <input type="hidden" name="star_pers"  id="star-pers" value="{{form.star_pers.value}}">
+                    <input type="hidden" name="doctor_id" value="{{doctor_id}}">
+                    <input type="hidden" name="user_id" value="{{user.id}}">
+                    <textarea name="text" rows="8" cols="80" placeholder="* Текст отзыва" required>{{form.text.value}}</textarea>
+                    <button type="submit" name="button">Отправить</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

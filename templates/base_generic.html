@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+     {% block title %}<title>{{ title }} - Panaceia</title>{% endblock %}
+     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/stylelk.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.weekcalendar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.scrollbar.css' %}" >
+    <link rel="stylesheet" href="{% static 'css/sp-style.css' %}" >
+
+    <script src="https://cdn.tiny.cloud/1/btnophrboqvk0zddwxdk92uh9y3ng21nv00dqwg52t9letwd/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=91488a5d-f346-4c91-9e15-c225d5aa25b0&lang=ru_RU"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+                    <a href="{% url 'home' %}" class="logo-header"><img src="{% static 'img/logo.png' %}" alt="">
+                    </a>
+                </div>
+                <div class="col-5">
+                    <div class="botton-header">
+                        <a href="#">Консультации</a><a href="#">Видеолекции</a>
+                    </div>
+                </div>
+                <div class="col-4 header-info">
+                    {% if request.user.is_authenticated %}
+                        <div class="name-person">
+                            {{user_profile.fio}}
+
+                            {% if user_profile.avatar != '' %}
+                                <img style="width:32px; height: 32px; padding:5px auto; object-fit: cover; border-radius:100px;" src="{{user_profile.avatar.url}}" alt="">
+                            {% else %}
+                                <img style="width:32px; height: 32px; padding:5px auto; object-fit: cover; border-radius:100px;" src="{% static 'img/user.png' %}" alt="">
+                            {% endif %}
+
+                            <a href="{% url 'logout' %}"><img src="{% static 'img/logout.png' %}" alt=""></a>
+                        </div>
+                    {% else %}
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="bodylk">
+        <div class="container">
+            <div class="row">
+
+                {% block sidebar %}
+                <div class="col-md-3 sidebar">
+
+                    {% if user.groups.all.0.name == "doctors" %}
+                        <ul>
+                            <li><a href="{% url 'user_profile' %}">Актуальное</a></li>
+                            <li><a href="{% url 'user_profile_main' %}">Профиль</a></li>
+                            <li><a href="{% url 'user_profile_grafik' %}">График работы</a></li>
+                            <li><a href="{% url 'user_profile_consalt_doctor' %}">Консультации</a></li>
+                            <li><a href="{% url 'user_profile_contact_user' %}">Список контактов</a></li>
+                            <li><a href="{% url 'user_profile_reviews' %}">Отзывы</a></li>
+                            <li><a href="{% url 'user_profile_recomend' %}">Рекомендации</a></li>
+                            <li><a href="{% url 'user_profile_videos' %}">Видеолекции</a></li>
+                            <li><a href="{% url 'user_profile_articles' %}">Статьи</a></li>
+                            <li><a href="">Сообщения</a></li>
+                            <li><a href="{% url 'user_profile_settings' %}">Настройки</a></li>
+                        </ul>
+                    {% endif %}
+
+                    {% if user.groups.all.0.name == "users" %}
+                        <ul>
+                            <li><a href="{% url 'user_profile' %}">Актуальное</a></li>
+                            <li><a href="{% url 'user_profile_main' %}">Профиль</a></li>
+                            <li><a href="{% url 'user_profile_consalt_user' %}">Консультации</a></li>
+                            <li><a href="{% url 'user_profile_recomend' %}">Рекомендации</a></li>
+                            <li><a href="{% url 'user_profile_videos' %}">Видеолекции</a></li>
+                            <li><a href="{% url 'user_profile_articles' %}">Статьи</a></li>
+                            <li><a href="">Сообщения</a></li>
+                            <li><a href="{% url 'user_profile_settings' %}">Настройки</a></li>
+                        </ul>
+                    {% endif %}
+
+                </div>
+                {% endblock %}
+
+                {% block content %}
+                <!-- default content text (typically empty) -->
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="{% static 'js/libs/jquery-3.2.1.slim.min.js' %}"></script>
+<script src="{% static 'js/libs/popper.min.js' %}"></script>
+<script src="{% static 'js/libs/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/libs/jquery.min.js' %}"></script>
+<script src="{% static 'js/libs/jquery-ui.js' %}"></script>
+<script src="{% static 'js/libs/data-picker-ru.js' %}"></script>
+<script src="{% static 'js/libs/jquery.weekcalendar.js' %}"></script>
+<script src="{% static 'js/libs/jquery.scrollbar.js' %}"></script>
+<script src="{% static 'js/libs/rater.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+<script type="module" src="{% static 'js/profile-init.js' %}"></script>
+</html>

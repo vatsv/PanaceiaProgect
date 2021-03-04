@@ -1,0 +1,346 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% load static %}
+
+<div class="col-md-9 px-4">
+    <div class="row">
+        <div class="col-md-12 block-info">
+            <div class="row">
+
+                <div class="col-md-5">
+                    <h4>Инфомация в моем профиле</h4>
+                </div>
+
+                <div class="col-md-12">
+                    {% if user.groups.all.0.name == "doctors" %}
+
+                        {% if user_doctor.verified == True %}
+                            <div class="alert alert-success"><p>Аккаунт верифицирован!</p></div>
+                        {% else %}
+                            <div class="alert alert-danger"><p>Аккаунт не верифицирован. Для его верификации, отправьте копию паспора и копию диплома, используя форму на этой <a href="{% url 'user_profile_settings' %}">странице</a>.</p></div>
+                        {% endif %}
+
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="line"></div>
+            <form action="{% url 'save_main_data' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-3 central avatar">
+
+                        {% if user_profile.avatar != '' %}
+                            <img src="{{user_profile.avatar.url}}" alt="" class="avatar_image">
+                        {% else %}
+                            <img src="{% static 'img/user.png' %}" alt="" class="avatar_image">
+                        {% endif %}
+
+                        <label for="avatar" style="cursor:pointer">Загрузить</label>
+                        <input type="file" id="avatar" name="avatar" class="avatar" style="display:none">
+                        <input type="hidden" id="avatar_none" class="avatar_none"  name="avatar_none" >
+                        <br>
+                        <a href="#" style="color:#acacac!important;" class="remove-avatar">Удалить</a>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="fio" value="{{user_profile.fio}}" minlength="3" maxlength="100" placeholder="ФИО" required>
+                        <input type="text" name="dob" class="dob" value="{{user_profile.dob}}" maxlength="10" placeholder="Дата рождения (дд.мм.гггг)" required>
+                        <input type="text" name="city" id="user-city" value="{{user_profile.city}}" minlength="3" maxlength="100" placeholder="Город" required>
+                        <input type="hidden" name="coords" id="coords" value="{{user_profile.coords}}" maxlength="200">
+
+                        <select class="select-timezone" name="timezone">
+
+                            {% for item in timezone %}
+                                {% if user_profile.time_zone == item.name  %}
+                                    <option value="{{ item.name }}">{{ item.title }}</option>
+                                    <option disabled>---</option>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for item in timezone %}
+                                <option value="{{ item.name }}">{{ item.title }}</option>
+                            {% endfor %}
+
+                        </select>
+
+                        <div class="sex-input">
+                            <p>Пол:</p>
+
+                            {%if user_profile.gender == "male" %}
+                                <p><input type="radio" name="gender" value="male" checked>Мужской</p>
+                            {% else %}
+                                {%if user_profile.gender == "" %}
+                                    <p><input type="radio" name="gender" value="male" checked>Мужской</p>
+                                {% else %}
+                                    <p><input type="radio" name="gender" value="male">Мужской</p>
+                                {% endif %}
+                            {% endif %}
+
+                            {%if user_profile.gender == "female" %}
+                                <p><input type="radio" name="gender" value="female" checked> Женский</p>
+                            {% else %}
+                                <p><input type="radio" name="gender" value="female"> Женский</p>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+                <div class="line"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                            </div>
+                            <div class="col-md-9">
+                                <div class="input-number-wrap">
+                                    <input type="text" name="email" value="{{user.email}}" minlength="5" maxlength="100" placeholder="E-mail">
+                                    <span class="input-plus">+</span> <input type="number" name="phone" value="{{user_profile.phone}}" maxlength="20" placeholder="Номер телефона" required>
+                                </div>
+                                <div class="input-number-wrap">
+                                    <input type="text" name="skype" value="{{user_profile.skype}}" minlength="5" maxlength="50" placeholder="Skype">
+                                    <span class="input-plus">+</span> <input type="number" name="whatsapp" value="{{user_profile.whatsapp}}" maxlength="20" placeholder="Whatsapp">
+                                </div>
+                                <br>
+                                <button type="submit" name="button">Сохранить изменения</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="line"></div>
+
+            {% if user.groups.all.0.name == "doctors" %}
+                <div class="row">
+
+                    <form action="{% url 'save_doctor_data' %}" method="POST" enctype="multipart/form-data" class="col-md-7 checkbox-block">
+                        {% csrf_token %}
+
+                        <h5>*Как Вы будите принимать пациентов?</h5>
+
+                        {% if user_doctor.meet_online == True %}
+                            <input type="checkbox" name="meet_online" class="doctor_chk" value="True" checked> Прием онлайн <img src="{% static 'img/question.png' %}" alt="Прием онлайн" title="Здесь будет текст информации">
+                        {% else %}
+                            <input type="checkbox" name="meet_online" class="doctor_chk" value="False"> Прием онлайн <img src="{% static 'img/question.png' %}" alt="Прием онлайн" title="Здесь будет текст информации">
+                        {% endif %}
+
+                        <br>
+
+                        {% if user_doctor.meet_offline == True %}
+                            <input type="checkbox" name="meet_offline" class="doctor_chk" value="True" checked> Прием оффлайн <img src="{% static 'img/question.png' %}" alt="Прием оффлайн" title="Здесь будет текст информации">
+                        {% else %}
+                            <input type="checkbox" name="meet_offline" class="doctor_chk" value="False"> Прием оффлайн <img src="{% static 'img/question.png' %}" alt="Прием оффлайн" title="Здесь будет текст информации">
+                        {% endif %}
+
+
+                        <br>
+                        <br>
+                        <select class="" name="orgtype">
+                            {% if user_doctor.orgtype != '' %}
+
+                                {% if user_doctor.orgtype == 'ur' %}
+                                    <option value="{{user_doctor.orgtype}}">Юридическое лицо</option>
+                                {% endif %}
+
+                                {% if user_doctor.orgtype == 'fiz' %}
+                                    <option value="{{user_doctor.orgtype}}">Физическое лицо</option>
+                                {% endif %}
+
+                                <option disabled>---</option>
+                            {% endif %}
+
+                            <option value="ur">Юридическое лицо</option>
+                            <option value="fiz">Физическое лицо</option>
+                        </select>
+
+                        {% for spec in user_spec %}
+
+                            <div class="row spec-block spec-block-{{ spec.id }}">
+                                <div class="col-8">
+                                    <input type="text" list="list-spec" name="spec[{{ spec.id }}]" class="input-spec" id="input-spec-{{ spec.id }}" value="{{ spec.title }}" placeholder="специальность">
+                                </div>
+                                <div class="col-4">
+                                    <a href="#" class="spec-remove item-remove" data-id="{{ spec.id }}" data-name="spec-block">Удалить</a>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                        <datalist id="list-spec">
+                            <select>
+                                {% for specialty in specialty_list%}
+                                    <option value="{{ specialty.name }}">{{ specialty.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </datalist>
+
+                        <a href="#" class="spec-add">+ Добавить специальность</a>
+                        <div class="line"></div>
+                        <h4>Специализация</h4>
+
+                        {% if user_doctor.patient_grown == True %}
+                            <input type="checkbox" name="patient_grown" class="doctor_chk" value="True" checked> Взрослые
+                        {% else %}
+                            <input type="checkbox" name="patient_grown" class="doctor_chk" value="False"> Взрослые
+                        {% endif %}
+
+                        {% if user_doctor.patient_children == True %}
+                            <input type="checkbox" name="patient_children" class="doctor_chk" value="True" checked> Дети
+                        {% else %}
+                            <input type="checkbox" name="patient_children" class="doctor_chk" value="False"> Дети
+                        {% endif %}
+
+                        <div class="line"></div>
+
+                        <div class="row">
+                            <div class="col-md-12 block-form">
+                                <h4>* Услуги</h4>
+
+                                {% for service in user_services %}
+                                    <div class="row se-block se-block-{{ service.id }}">
+                                        <div class="col-5">
+                                            <input type="text" name="se[{{ service.id }}]" value="{{ service.name }}" placeholder="Название" required>
+                                        </div>
+                                        <div class="col-3">
+                                            <select name="set[{{ service.id }}]" required>
+
+                                                {% if service.time != '' %}
+                                                    <option value="{{ service.time }}">{{ service.time }} мин.</option>
+                                                    <option value="" disabled>---</option>
+                                                {% endif %}
+
+                                                <option value="30">30 мин.</option>
+                                                <option value="60">60 мин.</option>
+                                                <option value="90">90 мин.</option>
+                                                <option value="120">120 мин.</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="number" name="sep[{{ service.id }}]" value="{{ service.price }}" placeholder="Цена" required>
+                                        </div>
+                                        <div class="col-1">
+                                            <a href="#" class="item-remove" data-id="{{ service.id }}" data-name="se-block">Удалить</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+
+                        <a href="#" class="se-add">+ Добавить услугу</a>
+
+                        <div class="row">
+                            <div class="col-md-12 block-form">
+                                <h4>Расскажите об опыте работы</h4>
+                                <textarea name="experience_text" rows="8" cols="80" placeholder="Расскажите ос воем опыте работы">{{user_doctor.experience_text}}</textarea>
+                                <input type="number" maxlength="100" name="experience_years" value="{{user_doctor.experience_years}}" placeholder="Стаж">
+                            </div>
+                        </div>
+
+                        <div class="line"></div>
+                        <h4>* Образование</h4>
+
+                        {% for education in user_education %}
+
+                            <div class="row ed-block ed-block-{{ education.id }}">
+                                <div class="col-3">
+                                    <input type="text" name="edy[{{ education.id }}]" value="{{ education.years }}" placeholder="Года">
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" name="ed[{{ education.id }}]" value="{{ education.name }}" placeholder="Название организации">
+                                </div>
+                                <div class="col-4">
+                                    <a href="#" class="ed-remove item-remove" data-id="{{ education.id }}" data-name="ed-block">Удалить</a>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                        <a href="#" class="ed-add">+ Добавить учебное заведение</a>
+
+                        <div class="line"></div>
+                        <h4>Повышение квалификации</h4>
+
+                        {% for qualification in user_qualification %}
+
+                            <div class="row qu-block qu-block-{{ qualification.id }}">
+                                <div class="col-3">
+                                    <input type="text" name="quy[{{ qualification.id }}]" value="{{ qualification.years }}" placeholder="Года">
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" name="qu[{{ qualification.id }}]" value="{{ qualification.name }}" placeholder="Название организации">
+                                </div>
+                                <div class="col-4">
+                                    <a href="#" class="qu-remove item-remove" data-id="{{ qualification.id }}" data-name="qu-block">Удалить</a>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                        <a href="#" class="qu-add">+ Добавить учебное заведение</a>
+
+                        <div class="line"></div>
+                        <h4>Членство в ассоциациях</h4>
+
+                        {% for association in user_associations %}
+
+                            <div class="row as-block as-block-{{ association.id }}">
+                                <div class="col-8">
+                                    <input type="text" name="as[{{ association.id }}]" value="{{ association.title }}" placeholder="Название ассоциации">
+                                </div>
+                                <div class="col-4">
+                                    <a href="#" class="as-remove item-remove" data-id="{{ association.id }}" data-name="as-block">Удалить</a>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                        <a href="#" class="as-add">+ Добавить ассоциацию</a>
+
+                        <div class="col-md-12">
+                            <button type="submit" name="button">Сохранить изменения</button>
+                        </div>
+
+                    </form>
+                    <form action="{% url 'save_user_doc' %}" method="POST" enctype="multipart/form-data" class="col-md-5 documents-block">
+                        {% csrf_token %}
+                        <h4>Документы <img src="{% static 'img/question.png' %}" alt="Я врач" title="Здесь будет текст информации"></h4>
+                        <div class="documents-specialist">
+
+                            {% for documents in user_documents %}
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        {% if documents.image != '' %}
+                                            <img src="{{documents.image.url}}" alt="">
+                                        {% else %}
+                                            <img src="{% static 'img/foto.png' %}" alt="">
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-8">
+                                        {{ documents.title }}
+                                        <p><a href="{% url 'remove_user_doc' %}?doc_id={{documents.id}}">Удалить</a></p>
+                                    </div>
+                                </div>
+                                <div class="line"></div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <input type="text" name="doc_name" placeholder="Название" required>
+                        <label for="doc_file" class="doc_file_label" style="cursor:pointer">Прикрепить файл</label>
+                        <input type="file" id="doc_file" name="doc_file" class="doc_file" style="display:none" use-label="y">
+                        <div class="col-md-12">
+                            <button type="submit" name="button">Добавить</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

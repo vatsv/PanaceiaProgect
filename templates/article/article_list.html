@@ -1,0 +1,42 @@
+{% extends "home.html" %}
+
+{% block content %}
+{% load static %}
+
+<div class="articles">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <h4>Полезные статьи</h4>
+            </div>
+        </div>
+        <div class="row articles-wrap">
+
+            {% for article in articles %}
+
+                <div class="col-4 articles-item">
+                    <a href="{% url 'blog_detail' slug=article.slug %}" class="image-article">
+
+                        {% if article.image.url != '' %}
+                            <img src="{{ article.image.url }}" alt=""><br>
+                        {% else %}
+                            <img src="{% static 'img/article.png' %}" alt=""><br>
+                        {% endif %}
+
+                        <div class="date-articles">
+                            {{ article.date }}
+                        </div>
+                        <h5>{{ article.title }}</h5>
+                        <h6>{{ article.preview }}</h6>
+                    </a>
+                </div>
+
+            {% endfor %}
+
+            {% include "article/article_pagination.html" with page=articles %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

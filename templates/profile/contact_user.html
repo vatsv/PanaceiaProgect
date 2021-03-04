@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% load static %}
+
+<div class="col-md-9 px-4">
+
+    <div class="col-md-12 block-info"> <h4>Список ваших контактов</h4>
+
+        {% for contact in contact_list %}
+
+            <div class="line"></div>
+            <div class="row">
+                <div class="col-md-3 ml-3">
+                    {% if contact.image.avatar != '' %}
+                        <img src="/media/{{contact.image.avatar}}" alt="" class="avatar_image">
+                    {% else %}
+                        <img src="{% static 'img/user.png' %}" alt="" class="avatar_image">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <p>{{contact.user.fio}}</p>
+
+                    {% if contact.phone != '' %}
+                        <p><strong>Телефон:</strong> {{contact.phone}}</p>
+                    {% endif %}
+
+                    {% if contact.whatsapp != '' %}
+                        <p><strong>WhatsApp:</strong> {{contact.whatsapp}}</p>
+                    {% endif %}
+
+                    {% if contact.skype != '' %}
+                        <p><strong>Skype:</strong> {{contact.skype}}</p>
+                    {% endif %}
+
+                    {% if contact.email != '' %}
+                        <p><strong>E-mail:</strong> {{contact.email}}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

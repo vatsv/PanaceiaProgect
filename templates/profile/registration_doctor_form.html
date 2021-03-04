@@ -1,0 +1,38 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if form.errors %}
+    {% for key, value in form.errors.items %}
+        <div class="error-wrap">
+            {{ value }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="offer-block reg-page">
+    <div class="container">
+        <div class="row">
+         <div class="col-12">
+             <h3>Зарегистрироваться</h3>
+             <form method="post">
+                 {% csrf_token %}
+                 <input type="text" name="username" placeholder="Введите логин" value="{{ form.username.value }}" required>
+                 <input type="text" name="email" placeholder="Введите E-mail" value="{{ form.email.value }}"  required>
+                 <input type="text" name="first_name" placeholder="Введите ФИО" value="{{ form.first_name.value }}"  required>
+                 <input type="password" name="password1" placeholder="Введите Пароль" required>
+                 <input type="password" name="password2" placeholder="Повторите Пароль" required>
+                 <div class="col-12 submit-login">
+                  <input type="submit" value="Зарегистрироваться">
+                 </div>
+             </form>
+             <div class="col-12">
+              <h4>Зарегистрироваться с помощью аккаунта Google <a href=""><img src="{% static 'img/google.png' %}" alt=""></a></h4>
+             </div>
+         </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

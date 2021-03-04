@@ -1,0 +1,128 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="top-search">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <div class="search-title">
+                    Запишитесь на приём к специалисту онлайн
+                </div>
+            </div>
+        </div>
+        <div class="row popup-login">
+            <div class="col-sm">
+                <div class="search-form">
+                    <div class="form-offer">
+                        <form class="mainform">
+                            <p class="name">
+                                <input type="text" name="name" value="Имя автора" />
+                            </p>
+                            <p class="email">
+                                <input type="text" name="email" value="name@example.com" />
+                            </p>
+                            <p class="send">
+                                <input type="submit" value="Отправить" />
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="doctor-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-7">
+                <div class="row">
+                        <div class="col-4 doctor-img">
+
+                          <img src="/{{ avatar }}" alt="">
+                            <div class="reviews-coin">
+                                {{doctor.reviews_count}}
+                            </div>
+                            <div class="rating-profi">
+                                Профессионализм
+                                <div class="star-rate star-prof" data-rate-value="{{ doctor.star_prof }}" style="pointer-events: none"></div>
+                            </div>
+                            <div class="rating-qualities">
+                                Личные качества
+                                <div class="star-rate star-pers" data-rate-value="{{ doctor.star_pers }}" style="pointer-events: none"></div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                          <h3 class="doctor-name">{{fio}}</h3>
+                          <p>Номер для связи {{phone}}</p>
+                          <p>Специальзация: {{specialty}}</p>
+                          <p>Стаж работы: {{experience_years}}</p>
+                          <p>Средняя цена приема: {{average_price}}₽</p>
+                          <p>Количество записавшихся: {{count_meeting}}</p>
+                          <p>Формат консульцации: {{meet}}</p>
+                          <p>Работает: {{patients}}</p>
+                            {{coords}}
+                            {{review.text}}
+                        </div>
+                        <div class="col-12">
+                            {% for review in reviews %}
+                <div class="review-item">
+                    <p><strong>Имя:</strong> {{review.user.fio}} </p>
+
+                    <div class="star-wrap">
+                        <p>Профессионализм:</p>
+                        <div class="star-rate star-prof" data-rate-value="{{review.star_prof}}" style="pointer-events: none"></div>
+                    </div>
+
+                    <div class="star-wrap">
+                        <p>Личные качества:</p>
+                        <div class="star-rate star-pers" data-rate-value="{{review.star_pers}}" style="pointer-events: none"></div>
+                    </div>
+
+                    <p><strong>Текст отзыва:</strong> {{ review.text }}</p>
+                </div>
+            {% endfor %}
+                        </div>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="tab-map-content tabs-target">
+                    <div class="map" id="map-doctor" style="height:400px">
+                    </div>
+                </div>
+                <p>{{city}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+ymaps.ready(init);
+
+function init() {
+    var myMap = new ymaps.Map("map-doctor", {
+            center: [{{coords}}],
+            zoom: 16
+        }, {
+            searchControlProvider: 'yandex#search'
+        }),
+
+    // Создаем геообъект с типом геометрии "Точка".
+        myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [{{coords}}]
+            },
+            // Свойства.
+            properties: {
+                // Контент метки.
+                iconContent: 'Я тащусь',
+                hintContent: 'Ну давай уже тащи'
+            }
+        })
+    }
+</script>
+
+{% endblock %}
